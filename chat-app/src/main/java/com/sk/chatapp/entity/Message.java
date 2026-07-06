@@ -31,30 +31,34 @@ public class Message {
     private String content;
 
     @Builder.Default
-    @Column(name = "is_private", nullable = false)
-    private boolean isPrivate = false;
+    @Column(name = "is_direct_message", nullable = false)
+    private boolean isDirectMessage = false;
 
     @Column(name = "target_user", length = 100)
     private String targetUser;
+
+    @Column(name = "expires_at", nullable = false)
+    private Instant expiresAt;
 
     @Builder.Default
     @Column(name = "created_at", nullable = false)
     private Instant createdAt = Instant.now();
 
-    // Convenience constructors
-    public Message(String roomId, User sender, String content) {
+    public Message(String roomId, User sender, String content, Instant expiresAt) {
         this.roomId = roomId;
         this.sender = sender;
         this.content = content;
-        this.isPrivate = false;
+        this.isDirectMessage = false;
+        this.expiresAt = expiresAt;
         this.createdAt = Instant.now();
     }
 
-    public Message(User sender, String targetUser, String content) {
+    public Message(User sender, String targetUser, String content, Instant expiresAt) {
         this.sender = sender;
         this.targetUser = targetUser;
         this.content = content;
-        this.isPrivate = true;
+        this.isDirectMessage = true;
+        this.expiresAt = expiresAt;
         this.createdAt = Instant.now();
     }
 }
