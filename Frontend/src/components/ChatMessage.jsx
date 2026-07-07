@@ -7,8 +7,6 @@ const formatTimestamp = (value) => {
     minute: "2-digit",
   });
 };
-
-// Computes how much of a message's lifespan remains, as a percentage.
 function getLifePercent(createdAt, expiresAt) {
   if (!createdAt || !expiresAt) return null;
   const start = new Date(createdAt).getTime();
@@ -32,12 +30,8 @@ export default function ChatMessage({ message, isMine }) {
     const remainingMs = end - Date.now();
 
     if (barRef.current) {
-      // Set the starting width instantly, then let CSS transition it to 0
-      // over the exact remaining lifetime -- no per-second JS ticking needed.
       barRef.current.style.transition = "none";
       barRef.current.style.width = `${initialPercent}%`;
-      // Force a reflow so the browser registers the starting width before
-      // we change it, otherwise the transition won't animate.
       void barRef.current.offsetWidth;
       barRef.current.style.transition = `width ${Math.max(remainingMs, 0)}ms linear`;
       barRef.current.style.width = "0%";
