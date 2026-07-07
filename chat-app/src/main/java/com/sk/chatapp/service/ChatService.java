@@ -21,7 +21,7 @@ public class ChatService {
 
     @Autowired
     private UserRepository userRepository;
-
+    private static final long DEFAULT_TTL_SECONDS = 86_400;
     @Transactional
     public Message saveRoomMessage(String roomId, String senderUsername, String content) {
         User sender = userRepository.findByUsername(senderUsername)
@@ -31,7 +31,8 @@ public class ChatService {
                 .roomId(roomId)
                 .sender(sender)
                 .content(content)
-                .isPrivate(false)
+                .isDirectMessage(false)
+                .expiresAt(Instant.now().plusSeconds(DEFAULT_TTL_SECONDS))
                 .createdAt(Instant.now())
                 .build();
 
