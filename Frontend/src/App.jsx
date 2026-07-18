@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ChatPage from "./pages/ChatPage";
 import PrivateRoute from "./pages/PrivateRoute";
+import NotFoundPage from "./pages/NotFoundPage";
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
         }
       />
       <Route path="/" element={<Navigate to="/chat" replace />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }

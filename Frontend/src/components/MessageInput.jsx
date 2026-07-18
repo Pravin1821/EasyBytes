@@ -1,8 +1,5 @@
 import React, { useState } from "react";
 
-const keyIsEnter = (event) =>
-  event.key === "Enter" && !event.shiftKey && !event.isComposing;
-
 export default function MessageInput({ onSend, onTyping, disabled }) {
   const [text, setText] = useState("");
 
@@ -28,10 +25,10 @@ export default function MessageInput({ onSend, onTyping, disabled }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="border-t border-border-subtle bg-bg-surface px-6 py-4"
+      className="border-t border-border-subtle bg-bg-surface px-4 py-4 sm:px-6"
     >
-      <div className="mx-auto flex w-full max-w-3xl items-end gap-3">
-        <div className="flex-1 rounded-2xl border border-border-subtle bg-bg-base px-6 py-4 transition focus-within:border-ember/60 focus-within:ring-1 focus-within:ring-ember/20">
+      <div className="mx-auto flex w-full max-w-3xl items-center gap-3">
+        <div className="flex-1 flex items-center rounded-2xl border border-border-subtle bg-bg-base px-4 py-3 transition duration-200 focus-within:border-ember focus-within:ring-2 focus-within:ring-ember/10">
           <textarea
             rows={1}
             value={text}
@@ -41,7 +38,7 @@ export default function MessageInput({ onSend, onTyping, disabled }) {
               emitTyping();
             }}
             onKeyDown={(event) => {
-              if (keyIsEnter(event)) {
+              if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
                 event.preventDefault();
                 if (!disabled) {
                   submitMessage();
@@ -51,29 +48,29 @@ export default function MessageInput({ onSend, onTyping, disabled }) {
             placeholder={
               disabled
                 ? "Connecting to the room…"
-                : "Type a message and press Enter"
+                : "Type a message... (Shift+Enter for newline)"
             }
-            className="h-14 max-h-40 w-full resize-none bg-transparent text-base text-text-primary outline-none placeholder:text-text-faint"
+            className="flex-1 w-full min-h-[20px] max-h-24 resize-none bg-transparent text-sm text-text-primary outline-none placeholder:text-text-faint py-0.5 leading-relaxed"
           />
         </div>
         <button
           type="submit"
           disabled={disabled || !text.trim()}
-          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ember text-bg-base shadow-lg shadow-ember/20 transition hover:brightness-110 disabled:cursor-not-allowed disabled:bg-bg-elevated disabled:text-text-faint disabled:shadow-none"
+          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-ember text-bg-base shadow-lg shadow-ember/15 transition hover:brightness-110 disabled:cursor-not-allowed disabled:bg-bg-elevated disabled:text-text-faint disabled:shadow-none"
         >
           <span className="sr-only">Send</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            strokeWidth={1.8}
+            strokeWidth={2}
             stroke="currentColor"
-            className="h-5 w-5"
+            className="h-4.5 w-4.5"
           >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              d="M6 12 18 6l-4 6 4 6-12-6Z"
+              d="M6 12L18 6l-4 6 4 6-12-6z"
             />
           </svg>
         </button>
@@ -81,7 +78,3 @@ export default function MessageInput({ onSend, onTyping, disabled }) {
     </form>
   );
 }
-
-MessageInput.defaultProps = {
-  disabled: false,
-};

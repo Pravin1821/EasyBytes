@@ -7,6 +7,7 @@ const formatTimestamp = (value) => {
     minute: "2-digit",
   });
 };
+
 function getLifePercent(createdAt, expiresAt) {
   if (!createdAt || !expiresAt) return null;
   const start = new Date(createdAt).getTime();
@@ -47,42 +48,49 @@ export default function ChatMessage({ message, isMine }) {
   const hasExpiry = Boolean(message.createdAt && message.expiresAt);
 
   return (
-    <div className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
-      <div
-        className={`relative max-w-md overflow-hidden rounded-2xl px-4 py-3 shadow-lg ${
-          isMine
-            ? "bg-ember text-bg-base"
-            : "bg-bg-elevated text-text-primary border border-border-subtle"
-        }`}
-      >
-        <div className="mb-2 flex items-center gap-2 text-xs uppercase tracking-wide">
-          <span className="font-semibold">
-            {message.senderDisplayName || message.sender}
-          </span>
-          <span
-            className={`h-1.5 w-1.5 rounded-full ${
-              isMine ? "bg-bg-base/60" : "bg-cyan"
-            }`}
-          ></span>
-          <span className={`font-mono text-[11px] ${isMine ? "opacity-70" : "text-text-faint"}`}>
-            {formatTimestamp(message.createdAt)}
-          </span>
+    <div className={`flex w-full ${isMine ? "justify-end" : "justify-start"} gap-2.5 items-end animate-message-mount`}>
+      {!isMine && (
+        <div
+          className="h-8 w-8 rounded-full bg-bg-elevated border border-border-subtle flex items-center justify-center font-display font-bold text-[10px] text-ember shrink-0 shadow-sm"
+          title={message.senderDisplayName || message.sender}
+        >
+          {(message.senderDisplayName || message.sender).substring(0, 2).toUpperCase()}
         </div>
+      )}
 
-        <p className="text-sm leading-relaxed">{message.content}</p>
+      <div className={`w-fit max-w-[80%] sm:max-w-md flex flex-col ${isMine ? "items-end" : "items-start"} gap-1`}>
+        <div
+          className={`relative px-4 py-2.5 shadow-sm transition-all duration-200 hover:shadow-md ${
+            isMine
+              ? "bg-ember text-bg-base rounded-2xl rounded-tr-none"
+              : "bg-bg-elevated text-text-primary border border-border-subtle rounded-2xl rounded-tl-none"
+          }`}
+        >
+          <div className="mb-1 flex items-center gap-2 text-[9px] uppercase tracking-wider font-bold">
+            <span className={isMine ? "text-bg-base/90" : "text-text-muted"}>
+              {message.senderDisplayName || message.sender}
+            </span>
+            <span
+              className={`h-1 w-1 rounded-full ${
+                isMine ? "bg-bg-base/30" : "bg-cyan"
+              }`}
+            ></span>
+            <span className={`font-mono text-[9px] ${isMine ? "text-bg-base/50" : "text-text-faint"}`}>
+              {formatTimestamp(message.createdAt)}
+            </span>
+          </div>
+
+          <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{message.content}</p>
+        </div>
 
         {hasExpiry && (
           <div
-            className={`mt-2 h-[3px] w-full overflow-hidden rounded-full ${
-              isMine ? "bg-bg-base/20" : "bg-bg-base/40"
-            }`}
+            className="h-[3px] w-full overflow-hidden rounded-full bg-border-subtle/30"
             title="Time until this message is permanently deleted"
           >
             <div
               ref={barRef}
-              className={`h-full rounded-full ${
-                isMine ? "bg-bg-base/70" : "bg-ember"
-              } ${isDying ? "animate-pulse" : ""}`}
+              className={`h-full rounded-full bg-ember shadow-[0_0_6px_var(--color-ember)] ${isDying ? "animate-decay-pulse" : ""}`}
             />
           </div>
         )}

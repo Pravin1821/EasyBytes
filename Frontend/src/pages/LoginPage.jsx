@@ -1,6 +1,41 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+
+function DecayPreview() {
+  const barRef = useRef(null);
+
+  useEffect(() => {
+    const el = barRef.current;
+    if (!el) return;
+    const runCycle = () => {
+      el.style.transition = "none";
+      el.style.width = "100%";
+      void el.offsetWidth;
+      el.style.transition = "width 6000ms linear";
+      el.style.width = "0%";
+    };
+    runCycle();
+    const loop = setInterval(runCycle, 6000);
+    return () => clearInterval(loop);
+  }, []);
+
+  return (
+    <div className="rounded-2xl border border-border-subtle bg-bg-elevated p-5 shadow-sm">
+      <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-text-faint font-mono font-semibold">
+        <span className="text-text-primary">you</span>
+        <span className="h-1 w-1 rounded-full bg-cyan"></span>
+        <span>just now</span>
+      </div>
+      <p className="mt-2 text-sm text-text-primary">
+        This message disappears in a few seconds — try it.
+      </p>
+      <div className="mt-3.5 h-[3px] w-full overflow-hidden rounded-full bg-bg-base/60">
+        <div ref={barRef} className="h-full rounded-full bg-ember shadow-[0_0_6px_var(--color-ember)]" />
+      </div>
+    </div>
+  );
+}
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -29,69 +64,100 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950">
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#0f172a,_transparent_60%)]"></div>
-  <div className="relative z-10 flex w-full max-w-xl flex-col gap-6 rounded-3xl border border-slate-800/80 bg-slate-900/70 p-12 shadow-2xl shadow-blue-500/10 backdrop-blur">
-        <div className="text-center">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-500 text-2xl shadow-lg">
-            💬
+    <div className="relative min-h-screen overflow-hidden bg-bg-base flex items-center justify-center p-4">
+      {/* Background blurs */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/4 top-1/4 h-96 w-96 rounded-full bg-ember/5 blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 h-96 w-96 rounded-full bg-cyan/5 blur-3xl"></div>
+      </div>
+
+      <div className="relative z-10 w-full max-w-4xl rounded-3xl border border-border-subtle bg-bg-surface shadow-2xl overflow-hidden grid lg:grid-cols-2">
+        {/* Left Form Column */}
+        <div className="flex flex-col p-8 sm:p-10 md:p-12 justify-between gap-8 min-h-[500px]">
+          {/* Logo & Header Group */}
+          <div className="flex flex-col gap-6">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-ember-dim border border-ember/25">
+              <span className="font-display text-lg font-bold text-ember">E</span>
+            </div>
+            <div>
+              <h1 className="font-display text-2xl font-semibold tracking-tight text-text-primary leading-tight">
+                Welcome back
+              </h1>
+              <p className="mt-1.5 text-sm text-text-muted">
+                Sign in to continue the conversation.
+              </p>
+            </div>
           </div>
-          <h1 className="mt-4 text-2xl font-semibold text-slate-100">
-            Welcome back
-          </h1>
-          <p className="text-sm text-slate-500">
-            Sign in to continue the conversation.
+
+          {/* Form Content */}
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5 flex-1 justify-center">
+            {error && (
+              <div
+                role="alert"
+                className="rounded-xl border border-danger/25 bg-danger/10 px-4 py-3 text-xs text-danger"
+              >
+                {error}
+              </div>
+            )}
+
+            <div className="flex flex-col gap-1.5">
+              <span className="text-xs font-semibold uppercase tracking-wider text-text-muted">
+                Username or email <span className="text-ember font-bold">*</span>
+              </span>
+              <input
+                required
+                value={usernameOrEmail}
+                onChange={(event) => setUsernameOrEmail(event.target.value)}
+                placeholder="pravin@email.com"
+                className="h-12 w-full rounded-xl border border-border-subtle bg-bg-base px-4 text-sm text-text-primary outline-none transition duration-150 focus:border-ember focus:ring-2 focus:ring-ember/10"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <span className="text-xs font-semibold uppercase tracking-wider text-text-muted">
+                Password <span className="text-ember font-bold">*</span>
+              </span>
+              <input
+                required
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="••••••••"
+                className="h-12 w-full rounded-xl border border-border-subtle bg-bg-base px-4 text-sm text-text-primary outline-none transition duration-150 focus:border-ember focus:ring-2 focus:ring-ember/10"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="h-12 rounded-xl bg-ember text-sm font-semibold text-bg-base shadow-lg shadow-ember/15 transition duration-150 hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-bg-elevated disabled:text-text-faint disabled:shadow-none"
+            >
+              {submitting ? "Signing in..." : "Sign in"}
+            </button>
+          </form>
+
+          {/* Form Footer Link */}
+          <p className="text-xs text-text-muted">
+            Need an account?{" "}
+            <Link to="/register" className="font-semibold text-ember hover:brightness-110 underline decoration-ember/30 underline-offset-2">
+              Register
+            </Link>
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {error && (
-            <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-              {error}
-            </div>
-          )}
-
-          <label className="flex flex-col gap-2 text-base text-slate-300">
-            Username or email
-            <input
-              required
-              value={usernameOrEmail}
-              onChange={(event) => setUsernameOrEmail(event.target.value)}
-              placeholder="pravin@email.com"
-              className="w-full h-14 rounded-2xl border border-slate-800 bg-slate-950 px-8 text-slate-100 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-600"
-            />
-          </label>
-
-          <label className="flex flex-col gap-2 text-base text-slate-300">
-            Password
-            <input
-              required
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="••••••••"
-              className="w-full h-14 rounded-2xl border border-slate-800 bg-slate-950 px-8 text-slate-100 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-600"
-            />
-          </label>
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className="mt-4 inline-flex h-14 items-center justify-center rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-500 text-base font-semibold text-white shadow-lg transition hover:from-blue-400 hover:to-indigo-400 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
-          >
-            {submitting ? "Signing in..." : "Sign in"}
-          </button>
-        </form>
-
-        <p className="text-center text-sm text-slate-500">
-          Need an account?{" "}
-          <Link
-            to="/register"
-            className="font-semibold text-blue-400 hover:text-blue-300"
-          >
-            Create one here
-          </Link>
-        </p>
+        {/* Right Info Column */}
+        <div className="hidden lg:flex flex-col justify-between p-8 sm:p-10 md:p-12 border-l border-border-subtle bg-bg-base/35 gap-8">
+          <div>
+            <h2 className="font-display text-xl font-semibold tracking-tight text-text-primary leading-tight">
+              Every message has a lifespan
+            </h2>
+            <p className="mt-2 text-sm text-text-muted leading-relaxed">
+              No permanent history. No accidental paper trail. Messages burn
+              down on their own schedule — set by you, not by us.
+            </p>
+          </div>
+          <DecayPreview />
+        </div>
       </div>
     </div>
   );

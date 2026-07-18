@@ -6,8 +6,13 @@ export default function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900/80 text-white">
-        <div className="animate-pulse text-lg">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-bg-base text-text-primary">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-text-faint border-t-ember" />
+          <span className="font-display text-sm tracking-wide text-text-muted animate-pulse">
+            Authenticating...
+          </span>
+        </div>
       </div>
     );
   }
