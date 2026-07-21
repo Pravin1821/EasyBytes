@@ -103,7 +103,7 @@ export default function RegisterPage() {
           </div>
 
           {/* Form Content */}
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4.5 flex-1 justify-center">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5 flex-1 justify-center">
             {error && (
               <div
                 role="alert"
@@ -199,17 +199,19 @@ export default function RegisterPage() {
         </div>
 
         {/* Right Info Column */}
-        <div className="hidden lg:flex flex-col justify-between p-8 sm:p-10 md:p-12 border-l border-border-subtle bg-bg-base/35 gap-8">
-          <div>
-            <h2 className="font-display text-xl font-semibold tracking-tight text-text-primary leading-tight">
-              Every message has a lifespan
-            </h2>
-            <p className="mt-2 text-sm text-text-muted leading-relaxed">
-              No permanent history. No accidental paper trail. Messages burn
-              down on their own schedule — set by you, not by us.
-            </p>
+        <div className="hidden lg:flex flex-col p-8 sm:p-10 md:p-12 border-l border-border-subtle bg-bg-base/35">
+          <div className="flex flex-col justify-center gap-6 flex-1">
+            <div>
+              <h2 className="font-display text-xl font-semibold tracking-tight text-text-primary leading-tight">
+                Every message has a lifespan
+              </h2>
+              <p className="mt-2 text-sm text-text-muted leading-relaxed">
+                No permanent history. No accidental paper trail. Messages burn
+                down on their own schedule — set by you, not by us.
+              </p>
+            </div>
+            <DecayPreview />
           </div>
-          <DecayPreview />
         </div>
       </div>
     </div>

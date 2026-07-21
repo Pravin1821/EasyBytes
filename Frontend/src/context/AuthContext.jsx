@@ -12,26 +12,31 @@ const storageKey = "chatapp.auth";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState({
-    username: "testuser",
-    displayName: "Test User",
-    email: "testuser@example.com",
-  });
-  const [token, setToken] = useState("mock-jwt-token");
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
+  const [user, setUser] = useState(() => {
     const persisted = localStorage.getItem(storageKey);
     if (persisted) {
       try {
         const parsed = JSON.parse(persisted);
-        setUser(parsed.user);
-        setToken(parsed.token);
-      } catch (error) {
-        console.warn("Failed to parse persisted auth:", error);
+        return parsed.user || null;
+      } catch {
+        return null;
       }
     }
-  }, []);
+    return null;
+  });
+  const [token, setToken] = useState(() => {
+    const persisted = localStorage.getItem(storageKey);
+    if (persisted) {
+      try {
+        const parsed = JSON.parse(persisted);
+        return parsed.token || null;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (token) {
